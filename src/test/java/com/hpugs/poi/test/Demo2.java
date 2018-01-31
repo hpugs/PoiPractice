@@ -2,6 +2,7 @@ package com.hpugs.poi.test;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 
 import org.apache.poi.hssf.extractor.ExcelExtractor;
@@ -123,6 +124,25 @@ public class Demo2 {
 		ExcelExtractor excelExtractor = new ExcelExtractor(hssf);
 		excelExtractor.setIncludeSheetNames(false);//不显示Sheet的名称
 		System.out.println(excelExtractor.getText());
+	}
+	
+	/**
+	 * 工作簿插入数据
+	 * @throws IOException
+	 */
+	@Test
+	public void writeExcleCellValue() throws IOException{
+		POIFSFileSystem fileSystem = new POIFSFileSystem(fileIn);
+		HSSFWorkbook wb = new HSSFWorkbook(fileSystem);
+		HSSFSheet sheet = wb.getSheetAt(wb.getFirstVisibleTab());
+		HSSFRow row = sheet.createRow(0);
+		HSSFCell cell = row.createCell(0);
+		cell.setCellValue("插入数据");
+		
+		FileOutputStream fileOutputStream = new FileOutputStream(filePath);
+		wb.write(fileOutputStream);
+		fileOutputStream.flush();
+		fileOutputStream.close();
 	}
 	
 	@After

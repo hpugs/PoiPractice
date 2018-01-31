@@ -3,8 +3,6 @@ package com.hpugs.poi.test;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Calendar;
-import java.util.Date;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
@@ -13,10 +11,9 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.ss.usermodel.DataFormat;
+import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.IndexedColors;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.junit.After;
@@ -59,7 +56,7 @@ public class Demo3 {
 	}
 	
 	/**
-	 * @Description 测试创建Sheet页
+	 * @Description 测试设置行高
 	 * @throws IOException
 	 *
 	 * @author 高尚
@@ -179,6 +176,89 @@ public class Demo3 {
 		cellStyle.setFillForegroundColor(IndexedColors.RED.getIndex());
 		//设置浮雕样式
 		cellStyle.setFillPattern(CellStyle.ALIGN_CENTER);
+		cell.setCellStyle(cellStyle);
+		
+		wb.write(fileOut);
+	}
+	
+	/**
+	 * 设置单元格的字体
+	 * @throws IOException 
+	 */
+	@Test
+	public void setTextStyle() throws IOException{
+		HSSFWorkbook wb = new HSSFWorkbook();
+		HSSFSheet shoot = wb.createSheet("第一个shoot页");
+		HSSFRow row = shoot.createRow(0);
+		HSSFCell cell = row.createCell(1);
+		cell.setCellValue("今天是星期天");
+		
+		//设置字体样式
+		Font font = wb.createFont();
+//		font.setFontHeight((short)100);//设置字体高度
+		font.setFontHeightInPoints((short)20);//设置字体以及单元格的高度
+		font.setFontName("myAuto");
+		font.setItalic(true);
+		font.setStrikeout(true);
+		
+		//添加字体样式
+		CellStyle cellStyle = wb.createCellStyle();
+		cellStyle.setFont(font);
+		
+		//设置单元格样式
+		cell.setCellStyle(cellStyle);
+		
+		wb.write(fileOut);
+	}
+	
+	/**
+	 * 设置单元格自动换行
+	 * @throws IOException 
+	 */
+	@Test
+	public void setCellWrap() throws IOException{
+		HSSFWorkbook wb = new HSSFWorkbook();
+		HSSFSheet shoot = wb.createSheet("第一个shoot页");
+
+		CellStyle cellStyle = wb.createCellStyle();
+		cellStyle.setWrapText(true);//设置单元格换行
+		
+		HSSFRow row = shoot.createRow(1);
+		HSSFCell cell = row.createCell(1);
+		cell.setCellValue("今天是星期天真舒服");
+		cell.setCellStyle(cellStyle);
+		
+		row = shoot.createRow(2);
+		cell = row.createCell(1);
+		cell.setCellValue("今天是星期天\n真舒服");
+		cell.setCellStyle(cellStyle);
+		
+		wb.write(fileOut);
+	}
+	
+	/**
+	 * 设置单元格自动换行
+	 * @throws IOException 
+	 */
+	@Test
+	public void setDataFormat() throws IOException{
+		HSSFWorkbook wb = new HSSFWorkbook();
+		HSSFSheet shoot = wb.createSheet("第一个shoot页");
+
+		DataFormat format = wb.createDataFormat();
+		
+		HSSFRow row = shoot.createRow(1);
+		HSSFCell cell = row.createCell(1);
+		cell.setCellValue(123456.25);
+		CellStyle cellStyle = wb.createCellStyle();
+		cellStyle.setDataFormat(format.getFormat("0.0"));
+		cell.setCellStyle(cellStyle);
+		
+		row = shoot.createRow(2);
+		cell = row.createCell(1);
+		cell.setCellValue(123456.25);
+		cellStyle = wb.createCellStyle();
+		cellStyle.setDataFormat(format.getFormat("#,##0.000"));
 		cell.setCellStyle(cellStyle);
 		
 		wb.write(fileOut);
