@@ -1,13 +1,18 @@
 package com.hpugs.poi.test;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.List;
 
 import org.apache.poi.hssf.extractor.ExcelExtractor;
 import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFPicture;
+import org.apache.poi.hssf.usermodel.HSSFPictureData;
 import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFShape;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
@@ -86,6 +91,28 @@ public class Demo2 {
 				}
 				System.out.println();
 			}
+			
+			//读取图片  
+	        List<HSSFPictureData> pictures = hssf.getAllPictures();    
+	        for (HSSFShape shape : sheet.getDrawingPatriarch().getChildren()) {    
+	            if (shape instanceof HSSFPicture) {  
+	                HSSFPicture pic = (HSSFPicture) shape;    
+	                int pictureIndex = pic.getPictureIndex()-1;    
+	                HSSFPictureData picData = pictures.get(pictureIndex); 
+	                File file = new File("F:\\poi\\"+ picData.getData().length +".png");
+	                if(!file.exists()){
+	                	file.createNewFile();
+	                }
+	                FileOutputStream fileOut = new FileOutputStream(file);
+	                BufferedOutputStream buffOut = new BufferedOutputStream(fileOut);
+	                buffOut.write(picData.getData());
+	                buffOut.flush();
+	                fileOut.flush();
+	                buffOut.close();
+	                fileOut.close();
+	                System.out.println("image-size:" + picData.getData().length);  
+	            }    
+	        } 
 		}
 	}
 	
@@ -99,9 +126,9 @@ public class Demo2 {
 	 */
 	private Object getCellValue(HSSFCell cell){
 		switch (cell.getCellType()) {
-			case HSSFCell.CELL_TYPE_BOOLEAN:
+			case HSSFCell.CELL_TYPE_BOOLEAN://boolean类型
 				return cell.getBooleanCellValue();
-			case HSSFCell.CELL_TYPE_NUMERIC:
+			case HSSFCell.CELL_TYPE_NUMERIC://数值类型
 				return cell.getNumericCellValue();
 			default:
 				return cell.getStringCellValue();
